@@ -14,6 +14,7 @@ import os
 from urllib import request
 
 
+
 class Producer(threading.Thread):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
@@ -33,18 +34,17 @@ class Producer(threading.Thread):
             url = self.page_queue.get()
             self.parse_page(url)
 
-def parse_page(self, url):
-    response = requests.get(url, headers=self.headers)
-    text = response.text
-    html = etree.HTML(text)
-    contents = html.xpath("//a[@class='col-xs-6 col-sm-3']")
-    for content in contents:
-        title = content.xpath(".//p[@style='display: none']/text()")[0]
-        href = content.xpath(".//img/@data-original")[0]
-        suffix = os.path.splitext(href)[1]
-        filename = title + suffix
-        self.img_queue.put((href, filename))
-
+    def parse_page(self, url):
+        response = requests.get(url, headers=self.headers)
+        text = response.text
+        html = etree.HTML(text)
+        contents = html.xpath("//a[@class='col-xs-6 col-sm-3']")
+        for content in contents:
+            title = content.xpath(".//p[@style='display: none']/text()")[0]
+            href = content.xpath(".//img/@data-original")[0]
+            suffix = os.path.splitext(href)[1]
+            filename = title + suffix
+            self.img_queue.put((href, filename))
 
 class Consumer(threading.Thread):
     def __init__(self, page_queue, img_queue, *args, **kwargs):
